@@ -5,21 +5,21 @@ using Timesheets.Requests;
 
 namespace Timesheets.Controllers
 {
-    [Route("api/employee")]
+    [Route("api/contract")]
     [ApiController]
-    public class EmployeeController : ControllerBase
+    public class ContractController : ControllerBase
     {
-        private readonly IRepository<Employee> _employeeRepository;
+        private readonly IRepository<Contract> _contractRepository;
 
-        public EmployeeController(IRepository<Employee> employeeRepository)
+        public ContractController(IRepository<Contract> contractRepository)
         {
-            _employeeRepository = employeeRepository;
+            _contractRepository = contractRepository;
         }
 
         [HttpPost("create")]
-        public IActionResult Create([FromBody] CreateEmployeeRequest request)
+        public IActionResult Create([FromBody] CreateContractRequest request)
         {
-            return Ok(_employeeRepository.Add(new Employee
+            return Ok(_contractRepository.Add(new Contract
             {
                 Name = request.Name
             }));
@@ -28,19 +28,19 @@ namespace Timesheets.Controllers
         [HttpGet("all")]
         public IActionResult GetAll()
         {
-            return Ok(_employeeRepository.GetAll());
+            return Ok(_contractRepository.GetAll());
         }
 
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            return Ok(_employeeRepository.GetById(id));
+            return Ok(_contractRepository.GetById(id));
         }
 
         [HttpPut("update")]
-        public IActionResult Update([FromBody] UpdateEmployeeRequest request)
+        public IActionResult Update([FromBody] UpdateContractRequest request)
         {
-            return Ok(_employeeRepository.Update(new Employee
+            return Ok(_contractRepository.Update(new Contract
             {
                 Id = request.Id,
                 Name = request.Name
@@ -50,7 +50,7 @@ namespace Timesheets.Controllers
         [HttpDelete("delete/{id}")]
         public IActionResult Delete(int id)
         {
-            _employeeRepository.Delete(id);
+            _contractRepository.Delete(id);
             return Ok();
         }
     }

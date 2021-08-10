@@ -1,6 +1,6 @@
 ﻿namespace Timesheets.Models
 {
-    public class Employee : BaseEntity
+    public class Contract : BaseEntity
     {
     }
 }

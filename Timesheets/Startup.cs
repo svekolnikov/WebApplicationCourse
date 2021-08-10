@@ -4,6 +4,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Timesheets.DAL;
+using Timesheets.DAL.Interfaces;
+using Timesheets.DAL.Repository;
 
 
 namespace Timesheets
@@ -25,6 +28,9 @@ namespace Timesheets
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Timesheets", Version = "v1" });
             });
+
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddSingleton(typeof(IDataContainer<>), typeof(DataContainer<>));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

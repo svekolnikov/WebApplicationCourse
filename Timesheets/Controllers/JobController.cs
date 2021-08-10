@@ -5,21 +5,21 @@ using Timesheets.Requests;
 
 namespace Timesheets.Controllers
 {
-    [Route("api/employee")]
+    [Route("api/job")]
     [ApiController]
-    public class EmployeeController : ControllerBase
+    public class JobController : ControllerBase
     {
-        private readonly IRepository<Employee> _employeeRepository;
+        private readonly IRepository<Job> _jobRepository;
 
-        public EmployeeController(IRepository<Employee> employeeRepository)
+        public JobController(IRepository<Job> jobRepository)
         {
-            _employeeRepository = employeeRepository;
+            _jobRepository = jobRepository;
         }
 
         [HttpPost("create")]
-        public IActionResult Create([FromBody] CreateEmployeeRequest request)
+        public IActionResult Create([FromBody] CreateJobRequest request)
         {
-            return Ok(_employeeRepository.Add(new Employee
+            return Ok(_jobRepository.Add(new Job
             {
                 Name = request.Name
             }));
@@ -28,19 +28,19 @@ namespace Timesheets.Controllers
         [HttpGet("all")]
         public IActionResult GetAll()
         {
-            return Ok(_employeeRepository.GetAll());
+            return Ok(_jobRepository.GetAll());
         }
 
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            return Ok(_employeeRepository.GetById(id));
+            return Ok(_jobRepository.GetById(id));
         }
 
         [HttpPut("update")]
-        public IActionResult Update([FromBody] UpdateEmployeeRequest request)
+        public IActionResult Update([FromBody] UpdateJobRequest request)
         {
-            return Ok(_employeeRepository.Update(new Employee
+            return Ok(_jobRepository.Update(new Job
             {
                 Id = request.Id,
                 Name = request.Name
@@ -50,7 +50,7 @@ namespace Timesheets.Controllers
         [HttpDelete("delete/{id}")]
         public IActionResult Delete(int id)
         {
-            _employeeRepository.Delete(id);
+            _jobRepository.Delete(id);
             return Ok();
         }
     }
