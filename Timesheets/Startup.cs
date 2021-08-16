@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -29,8 +30,11 @@ namespace Timesheets
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Timesheets", Version = "v1" });
             });
 
+            services.AddDbContext<TimesheetsDbContext>(options =>
+                options.UseNpgsql(Configuration.GetConnectionString("default")));
+
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            services.AddSingleton(typeof(IDataContainer<>), typeof(DataContainer<>));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

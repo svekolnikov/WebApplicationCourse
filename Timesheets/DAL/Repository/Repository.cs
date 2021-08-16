@@ -1,54 +1,56 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Timesheets.DAL.Interfaces;
-using Timesheets.Models;
+using Timesheets.Models.Base;
 
 namespace Timesheets.DAL.Repository
 {
     public class Repository<T> : IRepository<T> where T : BaseEntity
     {
-        private readonly IDataContainer<T> _container;
+        private readonly TimesheetsDbContext _context;
+        private readonly DbSet<T> _entities;
 
-        public Repository(IDataContainer<T> container)
+        public Repository(TimesheetsDbContext context)
         {
-            _container = container;
-            _container.Entities ??= new List<T>();
+            _context = context;
+            _entities = context.Set<T>();
         }
-        public T Add(T entity)
+        public async Task<T> AddAsync(T entity)
         {
-            entity.CreatedAt = DateTimeOffset.Now;
-            entity.Id = _container.Entities.Count() > 0 ? _container.Entities[^1].Id + 1 : 1;
-            _container.Entities.Add(entity);
-            return _container.Entities[^1];
-        }
-
-        public List<T> GetAll()
-        {
-            return _container.Entities;
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
+            await _entities.AddAsync(entity);
+            _ = await _context.SaveChangesAsync();
+            return entity;
         }
 
-        public T GetById(int id)
+        public IQueryable<T> GetAll()
         {
-            return _container.Entities.Find(x => x.Id == id);
+            return _entities.AsQueryable();
         }
 
-        public void Delete(int id)
+        public async Task<T> GetByIdAsync(int id)
         {
-            _container.Entities.Remove(_container.Entities.Find(x => x.Id == id));
+            var entity = await _entities.SingleOrDefaultAsync(s => s.Id == id);
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
+            return entity;
         }
 
-        public T Update(T entity)
+        public async Task<T> Remove(T entity)
         {
-            var entityToUpdate = _container.Entities.FirstOrDefault(x => x.Id == entity.Id);
-            if (entityToUpdate == null) throw new ArgumentNullException("Entity not found");
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
+            _entities.Remove(entity);
+            await _context.SaveChangesAsync();
+            return entity;
+        }
 
-            _container.Entities.Remove(entityToUpdate);
-            entity.CreatedAt = entityToUpdate.CreatedAt;
-            entityToUpdate = entity;
-            _container.Entities.Add(entityToUpdate);
-
-            return entityToUpdate;
+        public async Task<T> UpdateAsync(T entity)
+        {
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
+            _context.Entry(entity).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return entity;
         }
     }
 }

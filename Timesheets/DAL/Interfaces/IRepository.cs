@@ -1,14 +1,15 @@
-﻿using System.Collections.Generic;
-using Timesheets.Models;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Timesheets.Models.Base;
 
 namespace Timesheets.DAL.Interfaces
 {
     public interface IRepository<T> where T : BaseEntity
     {
-        T Add(T entity);
-        List<T> GetAll();
-        T GetById(int id);
-        void Delete(int id);
-        T Update(T entity);
+        Task<T> AddAsync(T entity);
+        IQueryable<T> GetAll();
+        Task<T> GetByIdAsync(int id);
+        Task<T> Remove(T entity);
+        Task<T> UpdateAsync(T entity);
     }
 }
